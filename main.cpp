@@ -122,9 +122,7 @@ protected:
 
 public:
     // TODO - TTT101
-    Player(const string &name, char symbol)
-    {
-    }
+    Player(const string &name, char symbol) : name(name), symbol(symbol) {}
 
     // TODO - TTT101
     virtual void getMove(int &row, int &col) = 0;
@@ -132,18 +130,19 @@ public:
     // TODO - TTT101
     string getName() const
     {
-        return "";
+        return name;
     }
 
     // TODO - TTT101
     char getSymbol() const
     {
-        return ' ';
+        return symbol;
     }
 
     // TODO - TTT101
     void setName(const string &newName)
     {
+        name = newName;
     }
 
     virtual ~Player() {}
