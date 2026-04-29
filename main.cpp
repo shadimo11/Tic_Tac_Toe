@@ -39,15 +39,18 @@ public:
     }
 
     // TODO - TTT103
-    bool makeMove(int row, int col, char symbol)
-    {
+    bool makeMove(int row, int col, char symbol) {
+        if (!isFull()){
+            grid[row][col]=symbol;
+            return true;
+        }
         return false;
     }
 
+
     // TODO - TTT103
-    bool isValidMove(int row, int col) const
-    {
-        return false;
+    bool isValidMove(int row, int col) const {
+        return (row >= 0 && row < size && col >= 0 && col < size && grid[row][col] == ' ');
     }
 
     // TTT104 - Win Condition Logic
@@ -80,9 +83,14 @@ public:
     }
 
     // TODO - TTT103
-    bool isFull() const
-    {
-        return false;
+    bool isFull() const {
+        for (int i=0;i<size;i++){
+            for (int j=0;j<size;j++){
+                if (grid[i][j]==' ')
+                    return false;
+            }
+        }
+        return true;
     }
 
     // TODO - TTT102
