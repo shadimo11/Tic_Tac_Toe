@@ -31,6 +31,7 @@ public:
     // TODO - TTT102
     Board(int size = 3) : size(size)
     {
+        grid = vector<vector<char>>(size, vector<char>(size, ' '));
     }
 
     // TODO - TTT105
@@ -96,12 +97,20 @@ public:
     // TODO - TTT102
     char getCell(int row, int col) const
     {
-        return ' ';
+        return grid[row][col];;
     }
 
     // TODO - TTT102
     void reset()
     {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+
+                grid[i][j] = ' ';
+            }
+        }
     }
 
     // TODO - TTT102
