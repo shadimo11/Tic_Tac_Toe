@@ -35,12 +35,17 @@ public:
 
     // TODO - TTT103
     bool makeMove(int row, int col, char symbol) {
+        if (!isFull()){
+            grid[row][col]=symbol;
+            return true;
+        }
         return false;
     }
 
+
     // TODO - TTT103
     bool isValidMove(int row, int col) const {
-        return false;
+        return (row >= 0 && row < size && col >= 0 && col < size && grid[row][col] == ' ');
     }
 
     // TODO - TTT104
@@ -50,7 +55,13 @@ public:
 
     // TODO - TTT103
     bool isFull() const {
-        return false;
+        for (int i=0;i<size;i++){
+            for (int j=0;j<size;j++){
+                if (grid[i][j]==' ')
+                    return false;
+            }
+        }
+        return true;
     }
 
     // TODO - TTT102
