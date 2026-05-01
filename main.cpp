@@ -35,25 +35,32 @@ public:
     }
 
     // TODO - TTT105
-    void display() const {
+    void display() const
+    {
         cout << "\n    ";
         for (int c = 0; c < size; ++c)
             cout << "  " << (c + 1) << "  ";
         cout << "\n";
 
-        for (int r = 0; r < size; ++r) {
+        for (int r = 0; r < size; ++r)
+        {
             cout << "  " << (r + 1) << " ";
-            for (int c = 0; c < size; ++c) {
+            for (int c = 0; c < size; ++c)
+            {
                 char cell = grid[r][c];
                 cout << "  " << (cell == ' ' ? '.' : cell) << "  ";
-                if (c < size - 1) cout << "|";
+                if (c < size - 1)
+                    cout << "|";
             }
             cout << "\n";
-            if (r < size - 1) {
+            if (r < size - 1)
+            {
                 cout << "    ";
-                for (int c = 0; c < size; ++c) {
+                for (int c = 0; c < size; ++c)
+                {
                     cout << "-----";
-                    if (c < size - 1) cout << "+";
+                    if (c < size - 1)
+                        cout << "+";
                 }
                 cout << "\n";
             }
@@ -62,17 +69,19 @@ public:
     }
 
     // TODO - TTT103
-    bool makeMove(int row, int col, char symbol) {
-        if (!isFull()){
-            grid[row][col]=symbol;
+    bool makeMove(int row, int col, char symbol)
+    {
+        if (!isFull())
+        {
+            grid[row][col] = symbol;
             return true;
         }
         return false;
     }
 
-
     // TODO - TTT103
-    bool isValidMove(int row, int col) const {
+    bool isValidMove(int row, int col) const
+    {
         return (row >= 0 && row < size && col >= 0 && col < size && grid[row][col] == ' ');
     }
 
@@ -106,10 +115,13 @@ public:
     }
 
     // TODO - TTT103
-    bool isFull() const {
-        for (int i=0;i<size;i++){
-            for (int j=0;j<size;j++){
-                if (grid[i][j]==' ')
+    bool isFull() const
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if (grid[i][j] == ' ')
                     return false;
             }
         }
@@ -119,7 +131,7 @@ public:
     // TODO - TTT102
     char getCell(int row, int col) const
     {
-        return grid[row][col];;
+        return grid[row][col];
     }
 
     // TODO - TTT102
@@ -208,9 +220,23 @@ private:
         return ' ';
     }
 
-    // TODO - TTT202
+    // TTT202
     void getRandomMove(const Board &board, int &row, int &col) const
     {
+        vector<pair<int, int>> validMoves;
+        int sz = board.getSize();
+
+        for (int r = 0; r < sz; ++r)
+            for (int c = 0; c < sz; ++c)
+                if (board.isValidMove(r, c))
+                    validMoves.push_back({r, c});
+
+        if (!validMoves.empty())
+        {
+            int idx = rand() % validMoves.size();
+            row = validMoves[idx].first;
+            col = validMoves[idx].second;
+        }
     }
 
     // TODO - TTT203
@@ -297,11 +323,19 @@ public:
     // TODO - TTT204
     void setBoardRef(Board *board)
     {
+        boardRef = board;
     }
 
     // TODO - TTT204
     void getMove(int &row, int &col) override
     {
+        if (boardRef == nullptr)
+            return;
+
+        if (difficulty == Difficulty::EASY)
+            getRandomMove(*boardRef, row, col);
+        else
+            getBestMove(*boardRef, row, col); // HARD (minimax) implemented in TTT203
     }
 };
 
@@ -322,9 +356,10 @@ private:
     {
     }
 
-    // TODO - TTT303
+    // TTT303
     void printSeparator() const
     {
+        cout << "  ================================\n";
     }
 
 public:
@@ -437,15 +472,48 @@ public:
              << ", col " << (col+1) << "\n";
     }
 
-    // TODO - TTT303
+    // TTT303
     bool checkGameEnd()
     {
+        // Check if either player has won
+        for (int i = 0; i < 2; ++i)
+        {
+            if (players[i] != nullptr && board.checkWin(players[i]->getSymbol()))
+            {
+                gameOver = true;
+                winner = i;
+                return true;
+            }
+        }
+
+        // Check for draw (board full, no winner)
+        if (board.isFull())
+        {
+            gameOver = true;
+            winner = -1; // -1 signals a draw
+            return true;
+        }
+
         return false;
     }
 
-    // TODO - TTT303
+    // TTT303
     void displayResult() const
     {
+        board.display();
+        printSeparator();
+
+        if (winner == -1)
+        {
+            cout << "         It's a DRAW!\n";
+        }
+        else
+        {
+            cout << "    🎉  " << players[winner]->getName() << " WINS!  🎉\n";
+        }
+
+        printSeparator();
+        cout << "\n";
     }
 
     // TODO - TTT304
