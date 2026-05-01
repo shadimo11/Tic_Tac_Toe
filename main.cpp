@@ -354,6 +354,7 @@ private:
     // TODO - TTT305
     void clearScreen() const
     {
+        cout << "\n\n";
     }
 
     // TTT303
@@ -382,8 +383,30 @@ public:
     }
 
     // TODO - TTT305
-    void start()
-    {
+    void start() {
+        clearScreen();
+        cout << "\n";
+        printSeparator();
+        cout << "      TIC-TAC-TOE GAME\n";
+        printSeparator();
+        cout << "\n";
+
+        bool running = true;
+        while (running) {
+            showMenu();
+
+            bool replay = true;
+            while (replay) {
+                reset();
+                playRound();
+                displayResult();
+                replay = askReplay();
+            }
+
+            running = false;
+        }
+
+        cout << "\n  Thanks for playing! Goodbye.\n\n";
     }
 
     // TODO - TTT301
@@ -540,5 +563,7 @@ private:
 // TODO - TTT305
 int main()
 {
+    Game game;
+    game.start();
     return 0;
 }
