@@ -301,11 +301,40 @@ public:
     // TODO - TTT302
     void setupPvP()
     {
+        // Removed redundant pointer null checks
+        delete players[0]; delete players[1];
+        string name1, name2;
+        
+        cout << "\n  Enter name for Player 1 (X): ";
+        cin >> name1;
+        cout << "  Enter name for Player 2 (O): ";
+        cin >> name2;
+        
+        players[0] = new HumanPlayer(name1, 'X');
+        players[1] = new HumanPlayer(name2, 'O');
+        
+        cout << "\n  >> " << name1 << " (X) vs " << name2 << " (O)\n";
     }
 
     // TODO - TTT302
     void setupPvC(Difficulty difficulty)
     {
+        // Injected the board reference into the AI so it can calculate moves.
+        delete players[0]; delete players[1];
+        string name;
+        
+        cout << "\n  Enter your name (X): ";
+        cin >> name;
+        
+        players[0] = new HumanPlayer(name, 'X');
+        
+        // Create AI, set its board reference, then assign to the polymorphic array
+        AIPlayer* ai = new AIPlayer("Computer", 'O', difficulty);
+        ai->setBoardRef(&board);
+        players[1] = ai;
+        
+        string diffStr = (difficulty == Difficulty::EASY) ? "Easy" : "Hard";
+        cout << "\n  >> " << name << " (X) vs Computer/" << diffStr << " (O)\n";
     }
 
     // TODO - TTT205
