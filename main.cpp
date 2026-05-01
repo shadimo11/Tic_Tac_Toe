@@ -216,18 +216,76 @@ private:
     // TODO - TTT203
     int evaluateBoard(const Board &board) const
     {
+        if (board.checkWin(symbol))
+            return +10;
+        
+        if (board.checkWin(opponentSymbol()))
+            return -10;
+    
         return 0;
     }
 
     // TODO - TTT203
     int minimaxClean(Board boardCopy, int depth, bool isMaximizing) const
     {
-        return 0;
+        int score = evaluateBoard(boardCopy);
+        if (score != 0) return score;
+        if (boardCopy.isFull()) return 0;
+
+        int sz = boardCopy.getSize();
+        if (isMaximizing)
+        {
+            int best = numeric_limits<int>::min();
+            for (int r = 0; r < sz; ++r)
+                for (int c = 0; c < sz; ++c)
+                    if (boardCopy.isValidMove(r, c))
+                    {
+                        Board next = boardCopy;
+                        next.makeMove(r, c, symbol);
+                        best = max(best, minimaxClean(next, depth + 1, false));
+                    }
+            return best;
+        }
+        else
+        {
+            int best = numeric_limits<int>::max();
+            char opp = opponentSymbol();
+            for (int r = 0; r < sz; ++r)
+                for (int c = 0; c < sz; ++c)
+                    if (boardCopy.isValidMove(r, c))
+                    {
+                        Board next = boardCopy;
+                        next.makeMove(r, c, opp);
+                        best = min(best, minimaxClean(next, depth + 1, true));
+                    }
+            return best;
+        }
     }
 
     // TODO - TTT203
-    void getBestMove(Board &board, int &row, int &col) const
-    {
+    void getBestMove(Board& board, int& row, int& col) const {
+        int sz = board.getSize();
+        int bestVal = numeric_limits<int>::min();
+        row = -1; col = -1;
+
+        for (int r = 0; r < sz; ++r)
+        {
+            for (int c = 0; c < sz; ++c)
+            {
+                if (board.isValidMove(r, c))
+                {
+                    Board next = board;
+                    next.makeMove(r, c, symbol);
+                    int moveVal = minimaxClean(next, 0, false);
+                    if (moveVal > bestVal)
+                    {
+                        bestVal = moveVal;
+                        row = r;
+                        col = c;
+                    }
+                }
+            }
+        }
     }
 
 public:
