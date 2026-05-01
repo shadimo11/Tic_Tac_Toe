@@ -71,7 +71,7 @@ public:
     // TODO - TTT103
     bool makeMove(int row, int col, char symbol)
     {
-        if (!isFull())
+        if (isValidMove(row, col))
         {
             grid[row][col] = symbol;
             return true;
@@ -244,10 +244,10 @@ private:
     {
         if (board.checkWin(symbol))
             return +10;
-        
+
         if (board.checkWin(opponentSymbol()))
             return -10;
-    
+
         return 0;
     }
 
@@ -255,8 +255,10 @@ private:
     int minimaxClean(Board boardCopy, int depth, bool isMaximizing) const
     {
         int score = evaluateBoard(boardCopy);
-        if (score != 0) return score;
-        if (boardCopy.isFull()) return 0;
+        if (score != 0)
+            return score;
+        if (boardCopy.isFull())
+            return 0;
 
         int sz = boardCopy.getSize();
         if (isMaximizing)
@@ -289,10 +291,12 @@ private:
     }
 
     // TODO - TTT203
-    void getBestMove(Board& board, int& row, int& col) const {
+    void getBestMove(Board &board, int &row, int &col) const
+    {
         int sz = board.getSize();
         int bestVal = numeric_limits<int>::min();
-        row = -1; col = -1;
+        row = -1;
+        col = -1;
 
         for (int r = 0; r < sz; ++r)
         {
@@ -372,18 +376,19 @@ public:
         currentPlayerIndex = 0;
         gameOver = false;
         winner = -1;
-        srand(static_cast<unsigned>(time(nullptr)));    // Essential for randomization
+        srand(static_cast<unsigned>(time(nullptr))); // Essential for randomization
     }
 
     // TODO - TTT205
     ~Game()
     {
         delete players[0];
-        delete players[1];      // Remove redundant pointer checks
+        delete players[1]; // Remove redundant pointer checks
     }
 
     // TODO - TTT305
-    void start() {
+    void start()
+    {
         clearScreen();
         cout << "\n";
         printSeparator();
@@ -392,11 +397,13 @@ public:
         cout << "\n";
 
         bool running = true;
-        while (running) {
+        while (running)
+        {
             showMenu();
 
             bool replay = true;
-            while (replay) {
+            while (replay)
+            {
                 reset();
                 playRound();
                 displayResult();
@@ -418,17 +425,18 @@ public:
     void setupPvP()
     {
         // Removed redundant pointer null checks
-        delete players[0]; delete players[1];
+        delete players[0];
+        delete players[1];
         string name1, name2;
-        
+
         cout << "\n  Enter name for Player 1 (X): ";
         cin >> name1;
         cout << "  Enter name for Player 2 (O): ";
         cin >> name2;
-        
+
         players[0] = new HumanPlayer(name1, 'X');
         players[1] = new HumanPlayer(name2, 'O');
-        
+
         cout << "\n  >> " << name1 << " (X) vs " << name2 << " (O)\n";
     }
 
@@ -436,19 +444,20 @@ public:
     void setupPvC(Difficulty difficulty)
     {
         // Injected the board reference into the AI so it can calculate moves.
-        delete players[0]; delete players[1];
+        delete players[0];
+        delete players[1];
         string name;
-        
+
         cout << "\n  Enter your name (X): ";
         cin >> name;
-        
+
         players[0] = new HumanPlayer(name, 'X');
-        
+
         // Create AI, set its board reference, then assign to the polymorphic array
-        AIPlayer* ai = new AIPlayer("Computer", 'O', difficulty);
+        AIPlayer *ai = new AIPlayer("Computer", 'O', difficulty);
         ai->setBoardRef(&board);
         players[1] = ai;
-        
+
         string diffStr = (difficulty == Difficulty::EASY) ? "Easy" : "Hard";
         cout << "\n  >> " << name << " (X) vs Computer/" << diffStr << " (O)\n";
     }
@@ -464,17 +473,21 @@ public:
     {
         // Valdiate the move before making the move.
         int row, col;
-        while (true) {
+        while (true)
+        {
             cout << "\n  >> " << player->getName()
                  << " (" << player->getSymbol() << ") — your turn\n";
-            
+
             player->getMove(row, col);
-            
+
             // Validate input strictly before attempting state change
-            if (board.isValidMove(row, col)) {
+            if (board.isValidMove(row, col))
+            {
                 board.makeMove(row, col, player->getSymbol());
                 break;
-            } else {
+            }
+            else
+            {
                 cout << "  [!] Invalid move. Cell is occupied or out of range. Try again.\n";
             }
         }
@@ -486,13 +499,13 @@ public:
         // Removed aiPlayer->setBoardRef() since it is now securely injected during setupPvC
         cout << "\n  >> " << aiPlayer->getName()
              << " (" << aiPlayer->getSymbol() << ") is thinking...\n";
-        
+
         int row, col;
         aiPlayer->getMove(row, col);
         board.makeMove(row, col, aiPlayer->getSymbol());
-        
-        cout << "  >> Computer plays at row " << (row+1)
-             << ", col " << (col+1) << "\n";
+
+        cout << "  >> Computer plays at row " << (row + 1)
+             << ", col " << (col + 1) << "\n";
     }
 
     // TTT303
