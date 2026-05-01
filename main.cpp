@@ -35,8 +35,30 @@ public:
     }
 
     // TODO - TTT105
-    void display() const
-    {
+    void display() const {
+        cout << "\n    ";
+        for (int c = 0; c < size; ++c)
+            cout << "  " << (c + 1) << "  ";
+        cout << "\n";
+
+        for (int r = 0; r < size; ++r) {
+            cout << "  " << (r + 1) << " ";
+            for (int c = 0; c < size; ++c) {
+                char cell = grid[r][c];
+                cout << "  " << (cell == ' ' ? '.' : cell) << "  ";
+                if (c < size - 1) cout << "|";
+            }
+            cout << "\n";
+            if (r < size - 1) {
+                cout << "    ";
+                for (int c = 0; c < size; ++c) {
+                    cout << "-----";
+                    if (c < size - 1) cout << "+";
+                }
+                cout << "\n";
+            }
+        }
+        cout << "\n";
     }
 
     // TODO - TTT103
