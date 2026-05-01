@@ -273,11 +273,19 @@ public:
     // TODO - TTT205
     Game() : board(3)
     {
+        players[0] = nullptr;
+        players[1] = nullptr;
+        currentPlayerIndex = 0;
+        gameOver = false;
+        winner = -1;
+        srand(static_cast<unsigned>(time(nullptr)));    // Essential for randomization
     }
 
     // TODO - TTT205
     ~Game()
     {
+        delete players[0];
+        delete players[1];      // Remove redundant pointer checks
     }
 
     // TODO - TTT305
@@ -303,16 +311,43 @@ public:
     // TODO - TTT205
     void switchPlayer()
     {
+        currentPlayerIndex = (currentPlayerIndex == 0) ? 1 : 0;
     }
 
     // TODO - TTT205
     void handleHumanMove(Player *player)
     {
+        // Valdiate the move before making the move.
+        int row, col;
+        while (true) {
+            cout << "\n  >> " << player->getName()
+                 << " (" << player->getSymbol() << ") — your turn\n";
+            
+            player->getMove(row, col);
+            
+            // Validate input strictly before attempting state change
+            if (board.isValidMove(row, col)) {
+                board.makeMove(row, col, player->getSymbol());
+                break;
+            } else {
+                cout << "  [!] Invalid move. Cell is occupied or out of range. Try again.\n";
+            }
+        }
     }
 
     // TODO - TTT205
     void handleAIMove(AIPlayer *aiPlayer)
     {
+        // Removed aiPlayer->setBoardRef() since it is now securely injected during setupPvC
+        cout << "\n  >> " << aiPlayer->getName()
+             << " (" << aiPlayer->getSymbol() << ") is thinking...\n";
+        
+        int row, col;
+        aiPlayer->getMove(row, col);
+        board.makeMove(row, col, aiPlayer->getSymbol());
+        
+        cout << "  >> Computer plays at row " << (row+1)
+             << ", col " << (col+1) << "\n";
     }
 
     // TODO - TTT303
