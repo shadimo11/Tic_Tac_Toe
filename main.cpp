@@ -28,13 +28,13 @@ private:
     const int size;
 
 public:
-    // TODO - TTT102
+    // TTT102
     Board(int size = 3) : size(size)
     {
         grid = vector<vector<char>>(size, vector<char>(size, ' '));
     }
 
-    // TODO - TTT105
+    // TTT105
     void display() const
     {
         cout << "\n    ";
@@ -68,10 +68,10 @@ public:
         cout << "\n";
     }
 
-    // TODO - TTT103
+    // TTT103
     bool makeMove(int row, int col, char symbol)
     {
-        if (!isFull())
+        if (isValidMove(row, col))
         {
             grid[row][col] = symbol;
             return true;
@@ -79,7 +79,7 @@ public:
         return false;
     }
 
-    // TODO - TTT103
+    // TTT103
     bool isValidMove(int row, int col) const
     {
         return (row >= 0 && row < size && col >= 0 && col < size && grid[row][col] == ' ');
@@ -114,7 +114,7 @@ public:
         return diag1 || diag2;
     }
 
-    // TODO - TTT103
+    // TTT103
     bool isFull() const
     {
         for (int i = 0; i < size; i++)
@@ -214,10 +214,10 @@ private:
     Difficulty difficulty;
     Board *boardRef;
 
-    // TODO - TTT204
+    // TTT204
     char opponentSymbol() const
     {
-        return ' ';
+        return (symbol == 'X') ? 'O' : 'X';
     }
 
     // TTT202
@@ -262,13 +262,13 @@ public:
 
     void setDifficulty(Difficulty newDifficulty) { difficulty = newDifficulty; }
 
-    // TODO - TTT204
+    //  TTT204
     void setBoardRef(Board *board)
     {
         boardRef = board;
     }
 
-    // TODO - TTT204
+    // TTT204
     void getMove(int &row, int &col) override
     {
         if (boardRef == nullptr)
@@ -310,9 +310,11 @@ public:
     {
     }
 
-    // TODO - TTT205
+    // TTT205
     ~Game()
     {
+        delete players[0];
+        delete players[1];
     }
 
     // TODO - TTT305
@@ -328,11 +330,42 @@ public:
     // TODO - TTT302
     void setupPvP()
     {
+        // Removed redundant pointer null checks
+        delete players[0];
+        delete players[1];
+        string name1, name2;
+
+        cout << "\n  Enter name for Player 1 (X): ";
+        cin >> name1;
+        cout << "  Enter name for Player 2 (O): ";
+        cin >> name2;
+
+        players[0] = new HumanPlayer(name1, 'X');
+        players[1] = new HumanPlayer(name2, 'O');
+
+        cout << "\n  >> " << name1 << " (X) vs " << name2 << " (O)\n";
     }
 
     // TODO - TTT302
     void setupPvC(Difficulty difficulty)
     {
+        // Injected the board reference into the AI so it can calculate moves.
+        delete players[0];
+        delete players[1];
+        string name;
+
+        cout << "\n  Enter your name (X): ";
+        cin >> name;
+
+        players[0] = new HumanPlayer(name, 'X');
+
+        // Create AI, set its board reference, then assign to the polymorphic array
+        AIPlayer *ai = new AIPlayer("Computer", 'O', difficulty);
+        ai->setBoardRef(&board);
+        players[1] = ai;
+
+        string diffStr = (difficulty == Difficulty::EASY) ? "Easy" : "Hard";
+        cout << "\n  >> " << name << " (X) vs Computer/" << diffStr << " (O)\n";
     }
 
     // TODO - TTT205
