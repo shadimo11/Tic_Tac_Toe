@@ -200,8 +200,22 @@ public:
     HumanPlayer(const string &name, char symbol) : Player(name, symbol) {}
 
     // TODO - TTT201
-    void getMove(int &row, int &col) override
-    {
+    void getMove(int &row, int &col) override {
+        while (true)
+        {
+            cout << "  Enter row and column (1-3): ";
+            int r, c;
+            cin >> r >> c;
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(10000, '\n');
+                cout << "Invalid input. Enter a number.\n";
+                continue;
+            }
+            row = r - 1;
+            col = c - 1;
+            break;
+        }
     }
 };
 
@@ -214,10 +228,8 @@ private:
     Difficulty difficulty;
     Board *boardRef;
 
-    // TODO - TTT204
-    char opponentSymbol() const
-    {
-        return ' ';
+    char opponentSymbol() const{
+        return (symbol == 'X') ? 'O' : 'X';
     }
 
     // TTT202
@@ -368,6 +380,7 @@ private:
     }
 
 public:
+
     // TODO - TTT205
     Game() : board(3)
     {
@@ -416,9 +429,55 @@ public:
         cout << "\n  Thanks for playing! Goodbye.\n\n";
     }
 
+    int chooseMenuOption(){
+        int playerChoice=0;
+        clearScreen();
+        cout<<" 1- Player vs Player " <<endl;
+        printSeparator();
+        cout<<" 2- Player vs Computer (Easy) " <<endl;
+        printSeparator();
+        cout<<" 3- Player vs Computer (Hard) " <<endl;
+        printSeparator();
+        cout<<" 4- Exit " <<endl;
+        printSeparator();
+        cout << "Choose one from the listed numbers:"<<endl;
+        cin >> playerChoice;
+        return playerChoice;
+    }
+
     // TODO - TTT301
-    void showMenu()
-    {
+    void showMenu() {
+
+        while (true) {
+            int playerChoice = chooseMenuOption();  
+
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(10000, '\n');
+                cout << "Invalid input. Enter a number.\n";
+                continue;
+            }
+
+            if (playerChoice < 1 || playerChoice > 4) {
+                cout << "Enter 1-4.\n";
+                continue;
+            }
+
+            switch (playerChoice) {
+                case 1:
+                    setupPvP();
+                    return;          
+                case 2:
+                    setupPvC(Difficulty::EASY);
+                    return;
+                case 3:
+                    setupPvC(Difficulty::HARD);
+                    return;
+                case 4:
+                    cout << "Goodbye!\n";
+                    exit(0);
+            }
+        }
     }
 
     // TODO - TTT302
