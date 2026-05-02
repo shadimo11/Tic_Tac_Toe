@@ -203,19 +203,32 @@ public:
     void getMove(int &row, int &col) override {
         while (true)
         {
+
             cout << "  Enter row and column (1-3): ";
+
             int r, c;
             cin >> r >> c;
-            if (cin.fail()) {
+
+            if (cin.fail())
+            {
                 cin.clear();
                 cin.ignore(10000, '\n');
-                cout << "Invalid input. Enter a number.\n";
+                cout << "Invalid input. Enter numbers only.\n";
+               continue;
+            }
+
+            if (r < 1 || r > 3 || c < 1 || c > 3)
+            {
+
+                cout << "Out of range. Enter values between 1 and 3.\n";
                 continue;
             }
+
             row = r - 1;
             col = c - 1;
             break;
         }
+
     }
 };
 
@@ -614,18 +627,49 @@ public:
     // TODO - TTT304
     void reset()
     {
+        board.reset();
+        gameOver = false;
+        winner = -1;
+        currentPlayerIndex = 0;
     }
 
 private:
     // TODO - TTT304
     void playRound()
     {
+        while (!gameOver)
+        {
+            clearScreen();
+            board.display();
+
+            Player* current = players[currentPlayerIndex];
+
+            if (AIPlayer* ai = dynamic_cast<AIPlayer*>(current)){
+                handleAIMove(ai);
+
+            }
+            
+            else{
+                handleHumanMove(current);
+
+            }
+            
+            if (checkGameEnd()){
+                break;
+            }
+
+            switchPlayer();
+        }
     }
 
     // TODO - TTT304
     bool askReplay() const
     {
-        return false;
+        char choice;
+        cout << "  Play again? (y/n): ";
+        cin >> choice;
+
+        return (choice == 'y' || choice == 'Y');
     }
 };
 
